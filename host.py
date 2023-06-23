@@ -23,7 +23,7 @@ Disarankan menggunakan port 5000 untuk menghindari konflik potensial.
 port = 80 
 
 # Token kamu 
-token_discord_bot = "MTExOTg1MDI1MjUzMTQwMDgwNA.GwKA5k.grU_2nTuY7QieQxr_zej0TO5TaJOfiL0lgV70Q"
+token_discord_bot = ""
 token_website = "adiganteng" 
 
 # Channel id discord kamu
