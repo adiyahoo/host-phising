@@ -24,7 +24,7 @@ port = 80
 
 # Token kamu 
 token_discord_bot = ""
-token_website = "adiganteng" 
+token_website = "" 
 
 # Channel id discord kamu
 channel_id_kirim_data_ori = 1119851938767442020 # untuk bot discord ngirim data ke channel
