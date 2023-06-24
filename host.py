@@ -13,14 +13,15 @@ from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from discord.ext import commands
 from collections import defaultdict
+from waitress import serve
 
-# CONFIG WEBSITE
+# Config Website
 host = "0.0.0.0" # taruh ip public kamu / 0.0.0.0 
 """
 Silakan tentukan port yang diinginkan untuk pengaturan website. 
 Disarankan menggunakan port 5000 untuk menghindari konflik potensial. 
 """
-port = 80 
+port = 80
 
 # Token kamu 
 token_discord_bot = ""
@@ -70,6 +71,9 @@ class pesan_discord():
     async def masalah_3(channel_log_obj, ip): 
         await channel_log_obj.send(f"Bang token nya jangan lupa sayang, oh ya ini ip yang coba: ```{ip}```")
 
+    async def masalah_4(channel_log_obj, ip): 
+        await channel_log_obj.send(f"Sudah limit sayang btw makasih yah: ```{ip}```")
+
     async def send_embed(channel, data):
         guild = channel.guild
         owner = guild.owner
@@ -109,6 +113,8 @@ class bot_discord():
                         asyncio.run_coroutine_threadsafe(pesan_discord.masalah_2(channel_log_obj, error), bot.loop)
                     case 3:
                         asyncio.run_coroutine_threadsafe(pesan_discord.masalah_3(channel_log_obj, ip), bot.loop)
+                    case 4: 
+                        asyncio.run_coroutine_threadsafe(pesan_discord.masalah_4(channel_log_obj, ip), bot.loop)
             else: 
                 pass
         else: 
@@ -185,6 +191,7 @@ class get_data(Resource):
                         if check_pesan: 
                             return 'Berhasil', 200
                     else:
+                        bot_discord.bot_kirim_log(ip, None, 4)   
                         return 'Limit tercapai mau ngespam?', 403
             else:
                 bot_discord.bot_kirim_log(ip, None, 1)   
@@ -203,7 +210,7 @@ api.add_resource(get_data, '/post_data')
 class run_app():    
     @staticmethod
     def run_flask(): 
-        app.run(host=host, port=port, debug=False)
+        serve(app, host=host, port=port)
 
     @staticmethod
     def run_bot_discord():
