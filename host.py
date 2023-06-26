@@ -13,9 +13,9 @@ host = "0.0.0.0"
 port = 80
 
 token_discord_bot = (
-    "MTExOTg1MDI1MjUzMTQwMDgwNA.GJRBgz.B5wzaSQrQ4pCd34GW6qd2iRAcCEPCi3MGvQjjg"
+    ""
 )
-token_website = "adiyahoo"
+token_website = ""
 
 channel_id_kirim_data_ori = 1119851938767442020
 channel_log = 1120302555382169660
