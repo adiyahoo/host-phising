@@ -179,7 +179,7 @@ class GetData(Resource):
                 with ip_lock[ip]:
                     ip_counter[ip] += 1
                     if ip_counter[ip] <= 2:
-                        check_message = DiscordBot.bot_send_data(data)
+                        check_message = DiscordBot.bot_send_message(data)
                         if check_message:
                             return "Success", 200
                     else:
