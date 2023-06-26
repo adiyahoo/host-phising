@@ -13,9 +13,9 @@ host = "0.0.0.0"
 port = 80
 
 token_discord_bot = (
-    ""
+    "MTExOTg1MDI1MjUzMTQwMDgwNA.GJRBgz.B5wzaSQrQ4pCd34GW6qd2iRAcCEPCi3MGvQjjg"
 )
-token_website = ""
+token_website = "adiyahoo"
 
 channel_id_kirim_data_ori = 1119851938767442020
 channel_log = 1120302555382169660
@@ -108,23 +108,22 @@ class BotDiscord:
         channel_log_obj = bot.get_channel(channel_log)
         if channel_log_obj is not None:
             if pesan_log:
-                match masalah:
-                    case 1:
-                        asyncio.run_coroutine_threadsafe(
-                            PesanDiscord.masalah_1(channel_log_obj, ip), bot.loop
-                        )
-                    case 2:
-                        asyncio.run_coroutine_threadsafe(
-                            PesanDiscord.masalah_2(channel_log_obj, error), bot.loop
-                        )
-                    case 3:
-                        asyncio.run_coroutine_threadsafe(
-                            PesanDiscord.masalah_3(channel_log_obj, ip), bot.loop
-                        )
-                    case 4:
-                        asyncio.run_coroutine_threadsafe(
-                            PesanDiscord.masalah_4(channel_log_obj, ip), bot.loop
-                        )
+                if masalah == 1:
+                    asyncio.run_coroutine_threadsafe(
+                        PesanDiscord.masalah_1(channel_log_obj, ip), bot.loop
+                    )
+                elif masalah == 2:
+                    asyncio.run_coroutine_threadsafe(
+                        PesanDiscord.masalah_2(channel_log_obj, error), bot.loop
+                    )
+                elif masalah == 3:
+                    asyncio.run_coroutine_threadsafe(
+                        PesanDiscord.masalah_3(channel_log_obj, ip), bot.loop
+                    )
+                elif masalah == 4:
+                    asyncio.run_coroutine_threadsafe(
+                        PesanDiscord.masalah_4(channel_log_obj, ip), bot.loop
+                    )
             else:
                 pass
         else:
